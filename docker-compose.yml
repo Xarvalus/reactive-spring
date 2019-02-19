@@ -1,0 +1,36 @@
+version: '3'
+
+volumes:
+  dbdata_mongodb:
+    driver: local
+  dbdata_postgresdb:
+    driver: local
+  dbdata_redis:
+    driver: local
+
+services:
+  mongodb:
+    image: mongo:4.0.6
+    volumes:
+      - dbdata_mongodb:/data/db
+    ports:
+      - 27017:27017
+
+  postgresdb:
+    image: postgres:11.2-alpine
+    ports:
+      - 5432:5432
+    volumes:
+      - dbdata_postgresdb:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: ${POSTGRES_DATABASE_NAME}
+      POSTGRES_PASSWORD: ${POSTGRES_DATABASE_PASSWORD}
+
+  redis:
+    image: redis:5.0.3-alpine
+    ports:
+      - 6379:6379
+    volumes:
+      - dbdata_redis:/data
+    command:
+      - --appendonly yes
